@@ -20,6 +20,9 @@ importers:
       convex:
         specifier: ^1.18.2
         version: 1.26.1(react@19.1.1)
+      convex-helpers:
+        specifier: ^0.1.104
+        version: 0.1.104(convex@1.26.1(react@19.1.1))(react@19.1.1)(typescript@5.8.2)
       lucide-react:
         specifier: ^0.471.1
         version: 0.471.2(react@19.1.1)
@@ -895,6 +898,28 @@ packages:
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+
+  convex-helpers@0.1.104:
+    resolution: {integrity: sha512-7CYvx7T3K6n+McDTK4ZQaQNNGBzq5aWezpjzsKbOxPXx7oNcTP9wrpef3JxeXWFzkByJv5hRCjseh9B7eNJ7Ig==}
+    hasBin: true
+    peerDependencies:
+      '@standard-schema/spec': ^1.0.0
+      convex: ^1.24.0
+      hono: ^4.0.5
+      react: ^17.0.2 || ^18.0.0 || ^19.0.0
+      typescript: ^5.5
+      zod: ^3.22.4 || ^4.0.15
+    peerDependenciesMeta:
+      '@standard-schema/spec':
+        optional: true
+      hono:
+        optional: true
+      react:
+        optional: true
+      typescript:
+        optional: true
+      zod:
+        optional: true
 
   convex@1.26.1:
     resolution: {integrity: sha512-LFDy+r13Ehqz4Zsr8zwVKrakl35kdQsAkGXdAIIjcPHP6DFd9b7Wjqomfd/Zc9+xMuqbVEh0KGyjzabiRF306g==}
@@ -2823,6 +2848,13 @@ snapshots:
   commander@4.1.1: {}
 
   concat-map@0.0.1: {}
+
+  convex-helpers@0.1.104(convex@1.26.1(react@19.1.1))(react@19.1.1)(typescript@5.8.2):
+    dependencies:
+      convex: 1.26.1(react@19.1.1)
+    optionalDependencies:
+      react: 19.1.1
+      typescript: 5.8.2
 
   convex@1.26.1(react@19.1.1):
     dependencies:
