@@ -1,16 +1,38 @@
 "use client";
 
-import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { ReactNode } from "react";
+import { ConvexReactClient } from "convex/react";
+import { ConvexProviderWithAuth } from "convex/react";
+import { ReactNode, useMemo } from "react";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
+function useAuth() {
+  const {data: session, update} = useSession();
+
+  return useMemo(() => ({
+    isLoading : false,
+    isAuthenticated: session !== null,
+    fetchAccessToken: async({
+      forceRefreshToken
+    }: {forceRefreshToken:boolean}) => {
+      if(forceRefreshToken){
+        const session = await update();
+        return (session as any)?.convexToken ?? null;
+      }
+    },
+  }),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [JSON.stringify(session?.user)]
+);
+}
 
 export default function Providers({ children, session }: { children: ReactNode, session: Session | null }) {
   return (
     <SessionProvider session={session}>
-      <ConvexProvider client={convex}>{children}</ConvexProvider>
+      <ConvexProviderWithAuth client={convex} useAuth={useAuth}>{children}</ConvexProviderWithAuth>
     </SessionProvider>
   );
 }
