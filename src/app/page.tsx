@@ -1,5 +1,5 @@
 import { Button } from "../components/ui/button";
-import Tasks from "../components/planify/tasks";
+import Tasks from "../components/tasknest/tasks";
 import { signInAction } from "../../actions/auth-action";
 
 
