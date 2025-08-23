@@ -1,7 +1,7 @@
 'use client';
 
 import Tasks from "@/components/planify/tasks";
-import UserProfile from "@/components/planify/user-profile";
+import UserProfile from "@/components/nav/user-profile";
 import SideBar from "@/components/nav/side-bar";
 import MobileNav from "@/components/nav/mobile-nav";
 

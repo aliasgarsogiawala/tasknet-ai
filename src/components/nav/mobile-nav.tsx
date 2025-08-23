@@ -31,7 +31,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { primaryNavItems } from "@/utils";
-import UserProfile from "../planify/user-profile";
+import UserProfile from "./user-profile";
 
 export default function MobileNav() {
   return (
