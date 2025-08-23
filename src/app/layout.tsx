@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Planify",
-  description: "Planify provides seamless organization of your tasks and predicts what's next using ai.",
+  title: "Tasknest",
+  description: "Tasknest provides seamless organization of your tasks and predicts what's next using ai.",
 };
 
 export default function RootLayout({
