@@ -3,18 +3,22 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
+import { ChangeEvent } from "react";
+import AddTaskDialog from "../add-tasks/add-task-dialog";
 
-interface TaskProps {
-  taskName: string;
-  _id: Id<"todos">;
+export default function Task({
+  data,
+  isCompleted,
+  handleOnChange,
+}: {
+  data: Doc<"todos">;
   isCompleted: boolean;
-  handleOnChange?: () => void;
-}
-
-export default function Task({ taskName, _id, isCompleted, handleOnChange }: TaskProps) {
+  handleOnChange: any;
+}) {
+  const { taskName } = data;
   return (
     <div
-      key={_id}
+      key={data._id}
       className="flex items-center space-x-2 border-b-2 p-2 border-gray-100 animate-in fade-in"
     >
       <Dialog>
@@ -44,7 +48,7 @@ export default function Task({ taskName, _id, isCompleted, handleOnChange }: Tas
               </div>
             </DialogTrigger>
           </div>
-          <DialogContent>{taskName}</DialogContent>
+          <AddTaskDialog data={data} />
         </div>
       </Dialog>
     </div>

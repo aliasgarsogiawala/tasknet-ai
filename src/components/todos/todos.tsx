@@ -27,10 +27,11 @@ export default function Todos({ items }: TodosProps) {
       });
     }
   };
-  return items.map((task, idx) => (
+  return items.map((task: Doc<"todos">, idx) => (
     <Task
       key={task._id}
-      {...task}
+      data={task}
+      isCompleted={task.isCompleted}
       handleOnChange={() => handleOnChangeTodo(task)}
     />
   ));

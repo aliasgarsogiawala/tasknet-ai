@@ -67,7 +67,7 @@ export const createATodo = mutation({
   ) => {
     try {
       const newTaskId = await ctx.db.insert("todos", {
-        userId: "jn77dzzxgyx6zvjmb2fmayzs0n6tzy61" as Id<"users">,
+        userId: "js782t7x2n603tff2ys9dergrs7p79hs" as Id<"users">,
         taskName,
         description,
         priority,

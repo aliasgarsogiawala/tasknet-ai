@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Tasknet.ai",
   description:
-    "TodoVex seamlessly organizes your tasks and predicts what's nextusing AI.",
+    "Tasknet seamlessly organizes your tasks and predicts what's nextusing AI.",
 };
 
 export default function RootLayout({
