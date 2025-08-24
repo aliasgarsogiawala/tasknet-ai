@@ -6,3 +6,19 @@ export const get = query({
     return await ctx.db.query("todos").collect();
   },
 });
+
+export const completedTodos = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("todos")
+      .filter((q) => q.eq(q.field("isCompleted"), true)).collect();
+  },
+});
+
+export const inCompleteTodos = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("todos")
+      .filter((q) => q.eq(q.field("isCompleted"), false)).collect();
+  },
+});

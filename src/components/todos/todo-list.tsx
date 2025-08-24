@@ -7,8 +7,10 @@ import Task from "./task";
 
 export default function TodoList() {
     const todos= useQuery(api.todos.get) ?? [];
+    const completedTodos = useQuery(api.todos.completedTodos) ?? [];
+    const inCompleteTodos = useQuery(api.todos.inCompleteTodos) ?? [];
 
-    if(todos === undefined){
+    if(todos === undefined || completedTodos === undefined || inCompleteTodos === undefined){
         return <p>Loading..</p>
     }
   return <div className="xl:px-40" >

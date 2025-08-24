@@ -72,6 +72,10 @@ const authTables = {
 
 export default defineSchema({
   ...authTables,
+  tasks: defineTable({
+    isCompleted: v.boolean(),
+    text: v.string(),
+  }),
   todos: defineTable({
     userId: v.id("users"),
     projectId: v.id("projects"),
