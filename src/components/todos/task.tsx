@@ -2,15 +2,16 @@ import clsx from "clsx";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-
+import { Doc, Id } from "../../../convex/_generated/dataModel";
 
 interface TaskProps {
   taskName: string;
-  _id: string;
+  _id: Id<"todos">;
   isCompleted: boolean;
+  handleOnChange?: () => void;
 }
 
-export default function Task({ taskName, _id, isCompleted }: TaskProps) {
+export default function Task({ taskName, _id, isCompleted, handleOnChange }: TaskProps) {
   return (
     <div
       key={_id}
@@ -27,6 +28,7 @@ export default function Task({ taskName, _id, isCompleted }: TaskProps) {
                   "data-[state=checked]:bg-gray-300 border-gray-300"
               )}
               checked={isCompleted}
+              onCheckedChange={handleOnChange}
             />
             <DialogTrigger asChild>
               <div className="flex flex-col items-start">
