@@ -1,6 +1,7 @@
 import { auth } from "../../../auth";
 import Providers from "../providers";
 
+
 export default async function LoggedInLayout({
   children,
 }: Readonly<{
