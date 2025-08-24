@@ -22,3 +22,13 @@ export const inCompleteTodos = query({
       .filter((q) => q.eq(q.field("isCompleted"), false)).collect();
   },
 });
+
+export const totalTodos = query({
+  args: {},
+  handler: async (ctx) => {
+    const todos = await ctx.db.query("todos")
+      .filter((q) => q.eq(q.field("isCompleted"), true)).collect();
+
+      return todos.length || 0;
+  },
+});
