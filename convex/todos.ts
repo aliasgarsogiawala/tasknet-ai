@@ -1,5 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { Id } from "./_generated/dataModel";
+
 
 export const get = query({
   args: {},
@@ -47,5 +49,38 @@ export const unCheckATodo = mutation({
   handler: async (ctx, { taskId }) => {
     const newTaskId = await ctx.db.patch(taskId, { isCompleted: false });
     return newTaskId;
+  },
+});
+
+export const createATodo = mutation({
+  args: {
+    taskName: v.string(),
+    description: v.optional(v.string()),
+    priority: v.number(),
+    dueDate: v.number(),
+    projectId: v.id("projects"),
+    labelId: v.id("labels"),
+  },
+  handler: async (
+    ctx,
+    { taskName, description, priority, dueDate, projectId, labelId }
+  ) => {
+    try {
+      const newTaskId = await ctx.db.insert("todos", {
+        userId: "jn77dzzxgyx6zvjmb2fmayzs0n6tzy61" as Id<"users">,
+        taskName,
+        description,
+        priority,
+        dueDate,
+        projectId,
+        labelId,
+        isCompleted: false,
+      });
+      return newTaskId;
+    } catch (err) {
+      console.log("Error occurred during createATodo mutation", err);
+
+      return "";
+    }
   },
 });
