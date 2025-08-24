@@ -22,7 +22,7 @@ export default function Todos({ items }: TodosProps) {
       checkATodo({ taskId: task._id });
       toast({
         title: "✅ Task completed",
-        description: "You're a rockstar",
+        description: "Nice work",
         duration: 3000,
       });
     }
