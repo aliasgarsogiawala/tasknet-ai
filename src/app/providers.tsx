@@ -20,8 +20,9 @@ function useAuth() {
       }) => {
         if (forceRefreshToken) {
           const session = await update();
-          return session?.convexToken ?? null;
+          return (session as any)?.convexToken ?? null;
         }
+        return (session as any)?.convexToken ?? null;
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

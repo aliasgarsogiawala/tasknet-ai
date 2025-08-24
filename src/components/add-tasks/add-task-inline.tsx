@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,14 +13,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { toast, useToast } from "../ui/use-toast";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast, useToast } from "@/components/ui/use-toast";
 import { CalendarIcon, Text } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import { CardFooter } from "../ui/card";
 import { Dispatch, SetStateAction } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { format } from "date-fns";
@@ -41,9 +41,7 @@ const FormSchema = z.object({
     message: "Task name must be at least 2 characters.",
   }),
   description: z.string().optional(),
-  dueDate: z.date({
-    message: "A due date is required"
-  }),
+  dueDate: z.date({ message: "A due date is required" }),
   priority: z.string().min(1, { message: "Please select a priority" }),
   projectId: z.string().min(1, { message: "Please select a Project" }),
   labelId: z.string().min(1, { message: "Please select a Label" }),
@@ -51,22 +49,30 @@ const FormSchema = z.object({
 
 export default function AddTaskInline({
   setShowAddTask,
+  parentTask,
 }: {
   setShowAddTask: Dispatch<SetStateAction<boolean>>;
+  parentTask?: Doc<"todos">;
 }) {
+  const projectId = parentTask?.projectId || "kd7ev5kkgr6y80wz6gy0am2v0h7p7kje";
+  const labelId = parentTask?.labelId || "k97dyar8fq3adxr0dqkfq88yx57p70hx";
+  const priority = parentTask?.priority?.toString() || "1";
+  const parentId = parentTask?._id;
+
   const { toast } = useToast();
   const projects = useQuery(api.projects.getProjects) ?? [];
   const labels = useQuery(api.labels.getLabels) ?? [];
 
   const createATodoMutation = useMutation(api.todos.createATodo);
+  const createASubTodoMutation = useMutation(api.subTodos.createASubTodo);
 
   const defaultValues = {
     taskName: "",
     description: "",
-    priority: "1",
+    priority,
     dueDate: new Date(),
-    projectId: "kd7ev5kkgr6y80wz6gy0am2v0h7p7kje" as Id<"projects">,
-    labelId: "k97dyar8fq3adxr0dqkfq88yx57p70hx" as Id<"labels">,
+    projectId,
+    labelId,
   };
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -79,21 +85,42 @@ export default function AddTaskInline({
       data;
 
     if (projectId) {
-      const mutationId = createATodoMutation({
-        taskName,
-        description,
-        priority: parseInt(priority),
-        dueDate: moment(dueDate).valueOf(),
-        projectId: projectId as Id<"projects">,
-        labelId: labelId as Id<"labels">,
-      });
-
-      if (mutationId !== undefined) {
-        toast({
-          title: "🛠️ Created a task!",
-          duration: 3000,
+      if (parentId) {
+        //subtodo
+        const mutationId = createASubTodoMutation({
+          parentId,
+          taskName,
+          description,
+          priority: parseInt(priority),
+          dueDate: moment(dueDate).valueOf(),
+          projectId: projectId as Id<"projects">,
+          labelId: labelId as Id<"labels">,
         });
-        form.reset({ ...defaultValues });
+
+        if (mutationId !== undefined) {
+          toast({
+            title: "🦄 Created a task!",
+            duration: 3000,
+          });
+          form.reset({ ...defaultValues });
+        }
+      } else {
+        const mutationId = createATodoMutation({
+          taskName,
+          description,
+          priority: parseInt(priority),
+          dueDate: moment(dueDate).valueOf(),
+          projectId: projectId as Id<"projects">,
+          labelId: labelId as Id<"labels">,
+        });
+
+        if (mutationId !== undefined) {
+          toast({
+            title: "🛠️  Created a task!",
+            duration: 3000,
+          });
+          form.reset({ ...defaultValues });
+        }
       }
     }
   }
@@ -186,7 +213,10 @@ export default function AddTaskInline({
               name="priority"
               render={({ field }) => (
                 <FormItem>
-                  <Select onValueChange={field.onChange} defaultValue={"1"}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={priority}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a Priority" />
@@ -212,7 +242,7 @@ export default function AddTaskInline({
                 <FormItem>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={labelId || field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -220,8 +250,8 @@ export default function AddTaskInline({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {labels.map((label: Doc<"labels">) => (
-                        <SelectItem key={label._id} value={label._id}>
+                      {labels.map((label: Doc<"labels">, idx: number) => (
+                        <SelectItem key={idx} value={label._id}>
                           {label?.name}
                         </SelectItem>
                       ))}
@@ -240,7 +270,7 @@ export default function AddTaskInline({
               <FormItem>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={projectId || field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -248,8 +278,8 @@ export default function AddTaskInline({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {projects.map((project: Doc<"projects">) => (
-                      <SelectItem key={project._id} value={project._id}>
+                    {projects.map((project: Doc<"projects">, idx: number) => (
+                      <SelectItem key={idx} value={project._id}>
                         {project?.name}
                       </SelectItem>
                     ))}
