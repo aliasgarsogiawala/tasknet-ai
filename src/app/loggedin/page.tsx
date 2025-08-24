@@ -1,6 +1,6 @@
 'use client';
 
-import Tasks from "@/components/tasknest/tasks";
+import Tasks from "@/components/tasknet/tasks";
 import UserProfile from "@/components/nav/user-profile";
 import SideBar from "@/components/nav/side-bar";
 import MobileNav from "@/components/nav/mobile-nav";

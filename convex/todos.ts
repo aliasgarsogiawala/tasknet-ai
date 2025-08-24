@@ -1,38 +1,64 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { handleUserId } from "./auth";
 
 
 export const get = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("todos").collect();
+    const userId = await handleUserId(ctx);
+    if (userId) {
+      return await ctx.db
+        .query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .collect();
+    }
+    return [];
   },
 });
 
 export const completedTodos = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("todos")
-      .filter((q) => q.eq(q.field("isCompleted"), true)).collect();
+    const userId = await handleUserId(ctx);
+    if(userId){
+        return await ctx.db.query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("isCompleted"), true))
+        .collect();
+    }
+    return [];
   },
 });
 
 export const inCompleteTodos = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("todos")
-      .filter((q) => q.eq(q.field("isCompleted"), false)).collect();
+    const userId = await handleUserId(ctx);
+    if(userId){
+        return await ctx.db.query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("isCompleted"), false))
+        .collect();
+    }
+    return [];
   },
 });
 
 export const totalTodos = query({
   args: {},
   handler: async (ctx) => {
+    const userId = await handleUserId(ctx);
+    if(userId){
     const todos = await ctx.db.query("todos")
-      .filter((q) => q.eq(q.field("isCompleted"), true)).collect();
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("isCompleted"), true))
+        .collect();
 
       return todos.length || 0;
+    }
+    return 0;
   },
 });
 
@@ -66,17 +92,21 @@ export const createATodo = mutation({
     { taskName, description, priority, dueDate, projectId, labelId }
   ) => {
     try {
-      const newTaskId = await ctx.db.insert("todos", {
-        userId: "js782t7x2n603tff2ys9dergrs7p79hs" as Id<"users">,
-        taskName,
-        description,
-        priority,
-        dueDate,
-        projectId,
-        labelId,
-        isCompleted: false,
-      });
-      return newTaskId;
+      const userId = await handleUserId(ctx);
+      if (userId) {
+        const newTaskId = await ctx.db.insert("todos", {
+          userId,
+          taskName,
+          description,
+          priority,
+          dueDate,
+          projectId,
+          labelId,
+          isCompleted: false,
+        });
+        return newTaskId;
+      }
+      return null;
     } catch (err) {
       console.log("Error occurred during createATodo mutation", err);
 

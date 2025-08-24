@@ -220,8 +220,8 @@ export default function AddTaskInline({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {labels.map((label: Doc<"labels">, idx: number) => (
-                        <SelectItem key={idx} value={label._id}>
+                      {labels.map((label: Doc<"labels">) => (
+                        <SelectItem key={label._id} value={label._id}>
                           {label?.name}
                         </SelectItem>
                       ))}
@@ -248,8 +248,8 @@ export default function AddTaskInline({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {projects.map((project: Doc<"projects">, idx: number) => (
-                      <SelectItem key={idx} value={project._id}>
+                    {projects.map((project: Doc<"projects">) => (
+                      <SelectItem key={project._id} value={project._id}>
                         {project?.name}
                       </SelectItem>
                     ))}

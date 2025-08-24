@@ -5,11 +5,9 @@ import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { useToast } from "../ui/use-toast";
 
-interface TodosProps {
-  items: Doc<"todos">[];
-}
 
-export default function Todos({ items }: TodosProps) {
+
+export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
   const { toast } = useToast();
 
   const checkATodo = useMutation(api.todos.checkATodo);
