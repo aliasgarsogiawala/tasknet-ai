@@ -4,7 +4,8 @@
 Built with the Next.js 14 App Router, Convex, React, Next.js Auth V5 i.e. Auth.js, Google Sign in, ShadCN UI library, React Hook Forms, TypeScript, OPenAI, TailwindCSS and more
 
 
-<img alt="Logo" src="https://raw.githubusercontent.com/aliasgarsogiawala/tasknest-ai/main/public/next.svg">
+<img alt="Logo" src="https://raw.githubusercontent.com/aliasgarsogiawala/tasknest-ai/main/public/og-image.png">
+
 ## Features
 - 🌐 Next.js & Server actions
 - 🤖 AI Suggest Missing Tasks and Sub-Tasks using Open AI
