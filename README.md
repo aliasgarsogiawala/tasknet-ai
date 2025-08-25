@@ -1,4 +1,4 @@
-# Todovex - An Open Source AI-Powered Todoist Clone
+# Tasknet - An Open Source AI-Powered Task Manager inpired by Todoist
 
 
 Built with the Next.js 14 App Router, Convex, React, Next.js Auth V5 i.e. Auth.js, Google Sign in, ShadCN UI library, React Hook Forms, TypeScript, OPenAI, TailwindCSS and more
