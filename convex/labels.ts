@@ -15,6 +15,7 @@ export const getLabels = query({
       const systemLabels = await ctx.db
         .query("labels")
         .filter((q) => q.eq(q.field("type"), "system"))
+        .filter((q) => q.eq(q.field("userId"), null))
         .collect();
 
       return [...systemLabels, ...userLabels];

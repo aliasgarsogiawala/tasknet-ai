@@ -15,6 +15,7 @@ export const getProjects = query({
       const systemProjects = await ctx.db
         .query("projects")
         .filter((q) => q.eq(q.field("type"), "system"))
+        .filter((q) => q.eq(q.field("userId"), null))
         .collect();
 
       return [...systemProjects, ...userProjects];
