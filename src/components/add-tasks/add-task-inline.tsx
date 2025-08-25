@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
 const FormSchema = z.object({
@@ -54,8 +54,8 @@ export default function AddTaskInline({
   setShowAddTask: Dispatch<SetStateAction<boolean>>;
   parentTask?: Doc<"todos">;
 }) {
-  const projectId = parentTask?.projectId || "kd7ev5kkgr6y80wz6gy0am2v0h7p7kje";
-  const labelId = parentTask?.labelId || "k97dyar8fq3adxr0dqkfq88yx57p70hx";
+  const projectId = parentTask?.projectId;
+  const labelId = parentTask?.labelId ;
   const priority = parentTask?.priority?.toString() || "1";
   const parentId = parentTask?._id;
 
@@ -63,8 +63,11 @@ export default function AddTaskInline({
   const projects = useQuery(api.projects.getProjects) ?? [];
   const labels = useQuery(api.labels.getLabels) ?? [];
 
-  const createATodoMutation = useMutation(api.todos.createATodo);
-  const createASubTodoMutation = useMutation(api.subTodos.createASubTodo);
+  const createASubTodoEmbeddings = useAction(
+    api.subTodos.createSubTodoAndEmbeddings
+  );
+
+  const createTodoEmbeddings = useAction(api.todos.createTodoAndEmbeddings);
 
   const defaultValues = {
     taskName: "",
@@ -80,14 +83,14 @@ export default function AddTaskInline({
     defaultValues,
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     const { taskName, description, priority, dueDate, projectId, labelId } =
       data;
 
     if (projectId) {
       if (parentId) {
         //subtodo
-        const mutationId = createASubTodoMutation({
+        const mutationId = createASubTodoEmbeddings({
           parentId,
           taskName,
           description,
@@ -99,13 +102,13 @@ export default function AddTaskInline({
 
         if (mutationId !== undefined) {
           toast({
-            title: "🦄 Created a task!",
+            title: "🛠️ Created a task!",
             duration: 3000,
           });
           form.reset({ ...defaultValues });
         }
       } else {
-        const mutationId = createATodoMutation({
+        const mutationId = createTodoEmbeddings({
           taskName,
           description,
           priority: parseInt(priority),
@@ -116,7 +119,7 @@ export default function AddTaskInline({
 
         if (mutationId !== undefined) {
           toast({
-            title: "🛠️  Created a task!",
+            title: "🛠️ Created a task!",
             duration: 3000,
           });
           form.reset({ ...defaultValues });
