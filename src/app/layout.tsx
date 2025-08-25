@@ -5,10 +5,20 @@ import { Toaster } from "../components/ui/toaster";
 
 const defaultFont = Noto_Sans_Georgian({ subsets: ["latin"] });
 
+const ORIGIN_URL = process.env.NODE_ENV === "production"
+  ? "https://tasknet-ai.vercel.app"
+  : "http://localhost:3000";
+
 export const metadata: Metadata = {
   title: "Tasknet.ai",
   description:
     "Tasknet seamlessly organizes your tasks and predicts what's nextusing AI.",
+  icons:{
+    icon: '/favicon.ico'
+  },
+  metadataBase: new URL(ORIGIN_URL),
+  alternates: {
+    canonical: ORIGIN_URL,},
 };
 
 export default function RootLayout({

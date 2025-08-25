@@ -54,7 +54,7 @@ export default function ProjectIdPage() {
 
           <Todos items={completedTodosByProject} />
           <div className="flex items-center space-x-4 gap-2 border-b-2 p-2 border-gray-100 text-sm text-foreground/80">
-            <CompletedTodos totalTodos={projectTodosTotal} />
+            <CompletedTodos totalTodos={projectTodosTotal ?? 0} />
           </div>
         </main>
       </div>

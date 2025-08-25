@@ -7,14 +7,15 @@ import { useToast } from "../ui/use-toast";
 
 
 
-export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
+export default function Todos({ items , showDetails = false }:
+    { items: Array<Doc<"todos">>, showDetails?: boolean }) {
   const { toast } = useToast();
 
   const checkATodo = useMutation(api.todos.checkATodo);
   const unCheckATodo = useMutation(api.todos.unCheckATodo);
 
   const handleOnChangeTodo = (task: Doc<"todos">) => {
-    if (task.isCompleted) {
+    if (task.isCompleted) { 
       unCheckATodo({ taskId: task._id });
     } else {
       checkATodo({ taskId: task._id });
@@ -30,6 +31,7 @@ export default function Todos({ items }: { items: Array<Doc<"todos">> }) {
       key={task._id}
       data={task}
       isCompleted={task.isCompleted}
+      showDetails={showDetails}
       handleOnChange={() => handleOnChangeTodo(task)}
     />
   ));

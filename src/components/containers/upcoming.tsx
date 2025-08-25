@@ -20,7 +20,7 @@ export default function Upcoming() {
       </div>
       <div className="flex flex-col gap-1 py-4">
         <p className="font-bold flex text-sm">Overdue</p>
-        <Todos items={overdueTodos} />
+        <Todos showDetails={true} items={overdueTodos} />
       </div>
       <div className="pb-6">
         <AddTaskWrapper />
