@@ -58,7 +58,7 @@ export default function LoginForm() {
             <h1 className="inline-block text-center text-4xl font-medium tracking-tighter text-dark lg:text-7xl">
               An Open Source AI-Powered{" "}
               <br className="hidden lg:inline-block" />
-              Todoist Clone
+              Task Manager
             </h1>
             <h2 className="mt-8 text-center text-xl font-light tracking-tight lg:text-3xl">
               Tasknet seamlessly{" "}
