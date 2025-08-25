@@ -88,19 +88,19 @@ export default function LoginForm() {
           <Image
             alt="mobile"
             loading="lazy"
-            width="500"
-            height="600"
-            className="z-10 max-w-[400px]"
+            width="700"
+            height="1200"
+            className="z-10 w-[320px] sm:w-[360px] md:w-[420px] lg:w-[520px] xl:w-[600px] 2xl:w-[680px] h-auto"
             src={"/mobile.png"}
           />
           <Image
-            src="/desktop.png"
+            src="/mac.png"
             alt="laptop"
             loading="lazy"
             width="1000"
             height="500"
             data-nimg="1"
-            className="h-full -ml-28 mt-10 hidden lg:flex"
+            className="h-full -ml-16 md:-ml-24 lg:-ml-28 mt-10 hidden lg:flex"
           />
         </div>
       </div>
