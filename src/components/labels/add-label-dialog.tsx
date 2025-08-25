@@ -5,7 +5,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { api } from "../../../convex/_generated/api";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
@@ -19,8 +18,6 @@ import { Loader } from "lucide-react";
 export default function AddLabelDialog() {
   const addLabelMutation = useMutation(api.labels.createALabel);
   const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
   const { toast } = useToast();
   const form = useForm();
 
@@ -30,13 +27,15 @@ export default function AddLabelDialog() {
       const labelId: Id<"labels"> | null = await addLabelMutation({ name });
 
       if (labelId != undefined) {
-        router.push(`/loggedin/filter-labels/${labelId}`);
-        // document.getElementById("closeDialog")?.click();
+        // Close the dialog without navigating away
+        document.getElementById("closeDialog")?.click();
 
         toast({
           title: "😎 Successfully created a Label!",
           duration: 5000,
         });
+        // Reset the form for the next entry
+        form.reset({ name: "" });
         setIsLoading(false);
       }
     }
