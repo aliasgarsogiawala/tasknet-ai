@@ -1,7 +1,7 @@
 "use client";
 import { signInAction } from "../../actions/auth-action";
 import { Button } from "@/components/ui/button";
-import todovexLogo from "@/public/logo/todoist.png";
+import tasknetLogo from "@/public/logo/todoist.png";
 import clsx from "clsx";
 import { Loader, StepForward } from "lucide-react";
 import Image from "next/image";
@@ -16,7 +16,7 @@ export default function LoginForm() {
         <div className="max-width flex items-center justify-center lg:justify-between">
           <Link className="flex items-center gap-1" href="/loggedin">
             <Image
-              src={todovexLogo}
+              src={tasknetLogo}
               width="50"
               height="50"
               alt="logo"
