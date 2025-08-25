@@ -72,12 +72,13 @@ export default function LoginForm() {
                 <GetStartedButton />
               </form>
               <div className="w-fit items-center">
-                <Button
-                  className="text-xl text-center px-4 py-7 bg-transparent border-purple-500/50"
-                  variant={"outline"}
+                <Link
+                  href="https://github.com/aliasgarsogiawala/tasknet-ai"
                 >
-                  Star on Github ⭐️
-                </Button>
+                  <Button
+                  className="text-xl text-center px-4 py-7 bg-transparent border-purple-500/50"
+                   variant={"outline"}>Star on Github ⭐️</Button>
+                </Link>
               </div>
             </div>
           </div>
