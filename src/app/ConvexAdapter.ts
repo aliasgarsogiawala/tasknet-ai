@@ -5,7 +5,7 @@ import type {
   AdapterSession,
   AdapterUser,
   VerificationToken,
-} from "@auth/core/adapters";
+} from "next-auth/adapters";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { FunctionArgs, FunctionReference } from "convex/server";
 import { api } from "../../convex/_generated/api";

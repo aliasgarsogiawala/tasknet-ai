@@ -18,6 +18,14 @@
 			"isBackground": false,
 			"problemMatcher": [],
 			"group": "build"
+		},
+		{
+			"label": "pnpm build (no eslint)",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"build"
+			]
 		}
 	]
 }
