@@ -1,4 +1,5 @@
-import { Menu } from "lucide-react";
+'use client';
+import { Hash, Menu, PlusIcon } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -10,12 +11,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { primaryNavItems } from "@/utils";
+import { GET_STARTED_PROJECT_ID, primaryNavItems } from "@/utils";
 import Image from "next/image";
 import SearchForm from "./search-form";
 import UserProfile from "./user-profile";
 
 import todoist from "@/public/logo/todoist.png";
+import { api } from "../../../convex/_generated/api";
+import { useQuery } from "convex/react";
+import { Doc } from "../../../convex/_generated/dataModel";
+import AddProjectDialog from "../projects/add-project-dialog";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import AddLabelDialog from "../labels/add-label-dialog";
 
 export default function MobileNav({
   navTitle = "",
@@ -24,6 +31,25 @@ export default function MobileNav({
   navTitle?: string;
   navLink?: string;
 }) {
+  const projectList = useQuery(api.projects.getProjects);
+
+  const renderProjectItems = (projects: Array<Doc<"projects">>) => {
+    return projects.map(({ _id, name }, idx) => (
+      <Link
+        key={_id.toString()}
+        href={`/loggedin/projects/${_id.toString()}`}
+        className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground"
+      >
+        <Hash className="w-4 h-4" />
+        {name}
+      </Link>
+    ));
+  };
+
+  const hasGetStarted = (projectList || []).some(
+    (p) => p._id.toString() === GET_STARTED_PROJECT_ID
+  );
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -37,20 +63,47 @@ export default function MobileNav({
           <nav className="grid gap-2 text-lg font-medium">
             <UserProfile />
 
-            {primaryNavItems.map(({ name, icon, link }, idx) => (
-              <Link
-                key={idx}
-                href={link}
-                className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground"
+            {primaryNavItems.map(({ name, icon, link, id }, idx) => (
+              <div
+                key={`${name}-${idx}`}
+                className="flex items-center justify-between mx-[-0.65rem] rounded-xl px-3 py-2"
               >
-                {icon}
-                {name}
-              </Link>
+                <Link
+                  href={link}
+                  className="flex items-center gap-4 hover:text-foreground"
+                >
+                  {icon}
+                  {name}
+                </Link>
+                {id === "filters" && (
+                  <Dialog>
+                    <DialogTrigger id="mobileAddLabelTrigger">
+                      <PlusIcon className="h-5 w-5" aria-label="Add a Label" />
+                    </DialogTrigger>
+                    <AddLabelDialog />
+                  </Dialog>
+                )}
+              </div>
             ))}
 
             <div className="flex items-center mt-6 mb-2">
               <p className="flex flex-1 text-base">My Projects</p>
+              <AddProjectDialog />
             </div>
+
+            {/* Dynamic project list (system + user) */}
+            {projectList && renderProjectItems(projectList)}
+
+            {/* Ensure Get Started project is present for mobile users */}
+            {!hasGetStarted && (
+              <Link
+                href={`/loggedin/projects/${GET_STARTED_PROJECT_ID}`}
+                className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground"
+              >
+                <Hash className="w-4 h-4" />
+                Get Started
+              </Link>
+            )}
           </nav>
           <div className="mt-auto">
             <Card>
