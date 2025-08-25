@@ -21,6 +21,7 @@ import { Doc } from "../../../convex/_generated/dataModel";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import AddProjectDialog from "../projects/add-project-dialog";
 import AddLabelDialog from "../labels/add-label-dialog";
+import ManageLabelsDialog from "../labels/manage-labels-dialog";
 
 interface MyListTitleType {
   [key: string]: string;
@@ -80,43 +81,66 @@ export default function SideBar() {
                   )}
                 </div>
               )}
-              <div className={cn("flex items-center lg:w-full")}>
-                <div
-                  className={cn(
-                    "flex items-center text-left lg:gap-3 rounded-lg py-2 transition-all hover:text-primary justify-between w-full",
-                    pathname === link
-                      ? "active rounded-lg bg-primary/10 text-primary transition-all hover:text-primary"
-                      : "text-foreground "
-                  )}
-                >
-                  <Link
-                    key={idx}
-                    href={link}
-                    className={cn(
-                      "flex items-center text-left gap-3 rounded-lg transition-all hover:text-primary w-full"
-                    )}
-                  >
-                    <div className="flex gap-4 items-center w-full">
-                      <div className="flex gap-2 items-center">
-                        <p className="flex text-base text-left">
-                          {icon || <Hash />}
-                        </p>
-                        <p>{name}</p>
-                      </div>
-                    </div>
-                  </Link>
-                  {id === "filters" && (
+              <div className={cn("flex items-center lg:w-full")}
+              >
+                {id === "filters" ? (
+                  <div className="flex items-center justify-between w-full">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button
+                          className={cn(
+                            "flex items-center text-left lg:gap-3 rounded-lg py-2 transition-all hover:text-primary w-full",
+                            pathname === link
+                              ? "active rounded-lg bg-primary/10 text-primary"
+                              : "text-foreground"
+                          )}
+                        >
+                          <div className="flex gap-4 items-center w-full">
+                            <div className="flex gap-2 items-center">
+                              <p className="flex text-base text-left">
+                                {icon || <Hash />}
+                              </p>
+                              <p>{name}</p>
+                            </div>
+                          </div>
+                        </button>
+                      </DialogTrigger>
+                      <ManageLabelsDialog />
+                    </Dialog>
                     <Dialog>
                       <DialogTrigger id="closeDialog">
-                        <PlusIcon
-                          className="h-5 w-5"
-                          aria-label="Add a Label"
-                        />
+                        <PlusIcon className="h-5 w-5" aria-label="Add a Label" />
                       </DialogTrigger>
                       <AddLabelDialog />
                     </Dialog>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div
+                    className={cn(
+                      "flex items-center text-left lg:gap-3 rounded-lg py-2 transition-all hover:text-primary justify-between w-full",
+                      pathname === link
+                        ? "active rounded-lg bg-primary/10 text-primary transition-all hover:text-primary"
+                        : "text-foreground "
+                    )}
+                  >
+                    <Link
+                      key={idx}
+                      href={link}
+                      className={cn(
+                        "flex items-center text-left gap-3 rounded-lg transition-all hover:text-primary w-full"
+                      )}
+                    >
+                      <div className="flex gap-4 items-center w-full">
+                        <div className="flex gap-2 items-center">
+                          <p className="flex text-base text-left">
+                            {icon || <Hash />}
+                          </p>
+                          <p>{name}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           ))}

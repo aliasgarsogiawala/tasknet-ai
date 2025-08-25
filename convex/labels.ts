@@ -67,3 +67,23 @@ export const createALabel = mutation({
     }
   },
 });
+
+export const deleteLabel = mutation({
+  args: {
+    labelId: v.id("labels"),
+  },
+  handler: async (ctx, { labelId }) => {
+    const userId = await handleUserId(ctx);
+    if (!userId) return null;
+
+    const label = await ctx.db.get(labelId);
+    if (!label) return null;
+
+    // Only allow deleting user-owned labels
+    if (label.type !== "user") return null;
+    if (label.userId !== userId) return null;
+
+    await ctx.db.delete(labelId);
+    return labelId;
+  },
+});

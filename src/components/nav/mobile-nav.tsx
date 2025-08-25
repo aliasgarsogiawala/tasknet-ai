@@ -21,7 +21,8 @@ import { api } from "../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Doc } from "../../../convex/_generated/dataModel";
 import AddProjectDialog from "../projects/add-project-dialog";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import ManageLabelsDialog from "../labels/manage-labels-dialog";
 import AddLabelDialog from "../labels/add-label-dialog";
 
 export default function MobileNav({
@@ -64,26 +65,34 @@ export default function MobileNav({
             <UserProfile />
 
             {primaryNavItems.map(({ name, icon, link, id }, idx) => (
-              <div
-                key={`${name}-${idx}`}
-                className="flex items-center justify-between mx-[-0.65rem] rounded-xl px-3 py-2"
-              >
-                <Link
-                  href={link}
-                  className="flex items-center gap-4 hover:text-foreground"
-                >
-                  {icon}
-                  {name}
-                </Link>
-                {id === "filters" && (
+              id === "filters" ? (
+                <div key={`${name}-${idx}`} className="flex items-center justify-between">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="flex-1 text-left mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground">
+                        {icon}
+                        {name}
+                      </button>
+                    </DialogTrigger>
+                    <ManageLabelsDialog />
+                  </Dialog>
                   <Dialog>
                     <DialogTrigger id="mobileAddLabelTrigger">
                       <PlusIcon className="h-5 w-5" aria-label="Add a Label" />
                     </DialogTrigger>
                     <AddLabelDialog />
                   </Dialog>
-                )}
-              </div>
+                </div>
+              ) : (
+                <Link
+                  key={`${name}-${idx}`}
+                  href={link}
+                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground"
+                >
+                  {icon}
+                  {name}
+                </Link>
+              )
             ))}
 
             <div className="flex items-center mt-6 mb-2">
