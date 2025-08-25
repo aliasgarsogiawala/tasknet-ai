@@ -9,6 +9,7 @@ import { Id } from "../../../../../convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import SuggestMissingTasks from "@/components/add-tasks/suggest-tasks";
+import DeleteProject from "@/components/projects/delete-project";
 
 export default function ProjectIdPage() {
   const { projectId } = useParams<{ projectId: Id<"projects"> }>();
@@ -41,13 +42,14 @@ export default function ProjectIdPage() {
             <h1 className="text-lg font-semibold md:text-2xl">{projectName}</h1>
             <div className="flex gap-6 lg:gap-12 items-center">
             <SuggestMissingTasks projectId={projectId} />
+            <DeleteProject projectId={projectId} />
           </div>
           </div>
           
           <Todos items={inCompletedTodosByProject} />
 
           <div className="pb-6">
-            <AddTaskWrapper />
+            <AddTaskWrapper projectId={projectId}  />
           </div>
 
           <Todos items={completedTodosByProject} />

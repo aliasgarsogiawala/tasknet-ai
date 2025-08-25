@@ -18,6 +18,12 @@ export const suggestMissingItemsWithAi = action({
       projectId,
     });
 
+    const project = await ctx.runQuery(api.projects.getProjectByProjectId, {
+      projectId,
+    });
+    const projectName = project?.name || "";
+
+
     const response = await openai.chat.completions.create({
       messages: [
         {
@@ -27,7 +33,10 @@ export const suggestMissingItemsWithAi = action({
         },
         {
           role: "user",
-          content: JSON.stringify(todos),
+          content: JSON.stringify({
+            todos,
+            projectName,
+          }),
         },
       ],
       response_format: {
