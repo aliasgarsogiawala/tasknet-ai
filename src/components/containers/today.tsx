@@ -10,7 +10,17 @@ import moment from "moment";
 export default function Today() {
   const todos = useQuery(api.todos.get) ?? [];
   const todayTodos = useQuery(api.todos.todayTodos) ?? [];
+  const completedTodayTodos = useQuery(api.todos.completedTodayTodos) ?? [];
   const overdueTodos = useQuery(api.todos.overdueTodos) ?? [];
+
+  // Combine incomplete and completed tasks for today
+  const allTodayTodos = [...todayTodos, ...completedTodayTodos].sort((a, b) => {
+    // Sort by completion status (incomplete first), then by creation time
+    if (a.isCompleted !== b.isCompleted) {
+      return a.isCompleted ? 1 : -1;
+    }
+    return a._creationTime - b._creationTime;
+  });
 
   if (todos === undefined || todayTodos === undefined) {
     <p>Loading...</p>;
@@ -22,7 +32,11 @@ export default function Today() {
       </div>
       <div className="flex flex-col gap-1 py-4">
         <p className="font-bold flex text-sm">Overdue</p>
-        <Todos showDetails={true} items={overdueTodos} />
+        {overdueTodos.length > 0 ? (
+          <Todos showDetails={true} items={overdueTodos} />
+        ) : (
+          <div className="text-gray-500 text-sm py-2">No overdue tasks</div>
+        )}
       </div>
       <AddTaskWrapper />
       <div className="flex flex-col gap-1 py-4">
@@ -33,7 +47,11 @@ export default function Today() {
           <Dot />
           {moment(new Date()).format("dddd")}
         </p>
-        <Todos items={todayTodos} />
+        <Todos items={allTodayTodos} />
+        {completedTodayTodos.length > 0 && (
+          <CompletedTodos totalTodos={completedTodayTodos.length} />
+        )}
+        <AddTaskWrapper />
       </div>
     </div>
   );

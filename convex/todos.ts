@@ -105,10 +105,35 @@ export const todayTodos = query({
       return await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("isCompleted"), false))
         .filter(
           (q) =>
             q.gte(q.field("dueDate"), todayStart.valueOf()) &&
-            q.lte(todayEnd.valueOf(), q.field("dueDate"))
+            q.lte(q.field("dueDate"), todayEnd.valueOf())
+        )
+        .collect();
+    }
+    return [];
+  },
+});
+
+export const completedTodayTodos = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await handleUserId(ctx);
+
+    if (userId) {
+      const todayStart = moment().startOf("day");
+      const todayEnd = moment().endOf("day");
+
+      return await ctx.db
+        .query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("isCompleted"), true))
+        .filter(
+          (q) =>
+            q.gte(q.field("dueDate"), todayStart.valueOf()) &&
+            q.lte(q.field("dueDate"), todayEnd.valueOf())
         )
         .collect();
     }
@@ -128,6 +153,7 @@ export const overdueTodos = query({
       return await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("isCompleted"), false))
         .filter((q) => q.lt(q.field("dueDate"), todayStart.getTime()))
         .collect();
     }
@@ -269,10 +295,46 @@ export const groupTodosByDate = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
+      // Get tomorrow's start (after today)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
       const todos = await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
-        .filter((q) => q.gt(q.field("dueDate"), new Date().getTime()))
+        .filter((q) => q.eq(q.field("isCompleted"), false))
+        .filter((q) => q.gte(q.field("dueDate"), tomorrow.getTime()))
+        .collect();
+
+      const groupedTodos = todos.reduce<any>((acc, todo) => {
+        const dueDate = new Date(todo.dueDate).toDateString();
+        acc[dueDate] = (acc[dueDate] || []).concat(todo);
+        return acc;
+      }, {});
+
+      return groupedTodos;
+    }
+    return [];
+  },
+});
+
+export const groupCompletedTodosByDate = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await handleUserId(ctx);
+
+    if (userId) {
+      // Get tomorrow's start (after today)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
+      const todos = await ctx.db
+        .query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("isCompleted"), true))
+        .filter((q) => q.gte(q.field("dueDate"), tomorrow.getTime()))
         .collect();
 
       const groupedTodos = todos.reduce<any>((acc, todo) => {
