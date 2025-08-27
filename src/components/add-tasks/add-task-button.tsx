@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import AddTaskInline from "./add-task-inline";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
 
@@ -11,13 +11,26 @@ export const AddTaskWrapper = ({
   projectId?: Id<"projects">;
 }) => {
   const [showAddTask, setShowAddTask] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (showAddTask && containerRef.current) {
+      // Scroll the form into view on small screens
+      setTimeout(() => {
+        containerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 0);
+    }
+  }, [showAddTask]);
 
   return showAddTask ? (
-    <AddTaskInline
-      setShowAddTask={setShowAddTask}
-      parentTask={parentTask}
-      projectId={projectId}
-    />  ) : (
+    <div ref={containerRef}>
+      <AddTaskInline
+        setShowAddTask={setShowAddTask}
+        parentTask={parentTask}
+        projectId={projectId}
+      />
+    </div>
+  ) : (
     <AddTaskButton
       onClick={() => setShowAddTask(true)}
       title={parentTask?._id ? "Add sub-task" : "Add task"}

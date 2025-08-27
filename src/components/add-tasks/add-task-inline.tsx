@@ -116,6 +116,7 @@ export default function AddTaskInline({
             duration: 3000,
           });
           form.reset({ ...defaultValues });
+          setShowAddTask(false);
         }
       } else {
         const mutationId = createTodoEmbeddings({
@@ -133,6 +134,7 @@ export default function AddTaskInline({
             duration: 3000,
           });
           form.reset({ ...defaultValues });
+          setShowAddTask(false);
         }
       }
     }
@@ -168,32 +170,30 @@ export default function AddTaskInline({
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="flex items-start gap-2">
-                    <Text className="ml-auto h-4 w-4 opacity-50" />
-                    <Textarea
-                      id="description"
-                      placeholder="Description"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </div>
+                  <Textarea
+                    id="description"
+                    placeholder="Description"
+                    className="resize-none"
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
           />
-          <div className="flex gap-2">
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <FormField
               control={form.control}
               name="dueDate"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+        <FormItem className="flex flex-col min-w-0">
+      <FormLabel>Due date</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant={"outline"}
                           className={cn(
-                            "flex gap-2 w-[240px] pl-3 text-left font-normal",
+              "flex gap-2 w-full pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -223,7 +223,8 @@ export default function AddTaskInline({
               control={form.control}
               name="priority"
               render={({ field }) => (
-                <FormItem>
+        <FormItem className="min-w-0">
+                  <FormLabel>Priority</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={priority}
@@ -250,7 +251,8 @@ export default function AddTaskInline({
               control={form.control}
               name="labelId"
               render={({ field }) => (
-                <FormItem>
+        <FormItem className="min-w-0">
+                  <FormLabel>Label</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={labelId || field.value}
@@ -266,6 +268,17 @@ export default function AddTaskInline({
                           {label?.name}
                         </SelectItem>
                       ))}
+                      <div className="border-t my-1" />
+                      <div className="px-2 py-1 text-xs text-muted-foreground">Can't find a label?</div>
+                      <div className="px-2 pb-2">
+                        <button
+                          type="button"
+                          className="text-primary text-sm underline"
+                          onClick={() => document.getElementById("mobileAddLabelTrigger")?.click() || document.getElementById("closeDialog")?.click()}
+                        >
+                          + Create a new label
+                        </button>
+                      </div>
                     </SelectContent>
                   </Select>
 
@@ -279,6 +292,7 @@ export default function AddTaskInline({
             name="projectId"
             render={({ field }) => (
               <FormItem>
+                <FormLabel>Project</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={projectId || field.value}

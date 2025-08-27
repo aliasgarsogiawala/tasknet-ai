@@ -52,7 +52,7 @@ export default function MobileNav({
   );
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 w-full max-w-[100vw] overflow-x-hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -132,7 +132,7 @@ export default function MobileNav({
           </div>
         </SheetContent>
       </Sheet>
-      <div className="flex items-center md:justify-between w-full gap-1 md:gap-2 py-2">
+      <div className="flex items-center md:justify-between w-full gap-1 md:gap-2 py-2 min-w-0">
         <div className="lg:flex-1">
           <Link href={navLink}>
             <p className="text-sm font-semibold text-foreground/70 w-24">
@@ -140,10 +140,10 @@ export default function MobileNav({
             </p>
           </Link>
         </div>
-        <div className="place-content-center w-full flex-1">
+        <div className="place-content-center w-full flex-1 min-w-0">
           <SearchForm />
         </div>
-        <div className="place-content-center w-12 h-12 lg:w-16 lg:h-20">
+        <div className="place-content-center w-12 h-12 lg:w-16 lg:h-20 shrink-0">
           <Image alt="logo" src={todoist} />
         </div>
       </div>
