@@ -79,7 +79,6 @@ export const deleteLabel = mutation({
     const label = await ctx.db.get(labelId);
     if (!label) return null;
 
-    // Only allow deleting user-owned labels
     if (label.type !== "user") return null;
     if (label.userId !== userId) return null;
 

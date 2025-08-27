@@ -15,7 +15,6 @@ export const AddTaskWrapper = ({
 
   useEffect(() => {
     if (showAddTask && containerRef.current) {
-      // Scroll the form into view on small screens
       setTimeout(() => {
         containerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 0);

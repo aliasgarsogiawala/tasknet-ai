@@ -76,7 +76,6 @@ export const deleteProject = mutation({
       const userId = await handleUserId(ctx);
       if (userId) {
         const taskId = await ctx.db.delete(projectId);
-        //query todos and map through them and delete
 
         return taskId;
       }

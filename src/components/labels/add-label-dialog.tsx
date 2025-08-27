@@ -27,14 +27,12 @@ export default function AddLabelDialog() {
       const labelId: Id<"labels"> | null = await addLabelMutation({ name });
 
       if (labelId != undefined) {
-        // Close the dialog without navigating away
         document.getElementById("closeDialog")?.click();
 
         toast({
           title: "😎 Successfully created a Label!",
           duration: 5000,
         });
-        // Reset the form for the next entry
         form.reset({ name: "" });
         setIsLoading(false);
       }
