@@ -99,7 +99,6 @@ export const todayTodos = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
-      // Use a 12h shift so date-only values (saved at local midnight) compare correctly across UTC
       const SHIFT = 12 * 60 * 60 * 1000;
       const todayStart = moment().startOf("day").valueOf() - SHIFT;
       const todayEnd = moment().endOf("day").valueOf() - SHIFT;
@@ -293,7 +292,6 @@ export const groupTodosByDate = query({
 
     if (userId) {
       const SHIFT = 12 * 60 * 60 * 1000;
-      // Start from tomorrow (local-aware via shift)
       const tomorrowStart = moment().add(1, "day").startOf("day").valueOf() - SHIFT;
 
       const todos = await ctx.db
@@ -352,7 +350,6 @@ export const deleteATodo = mutation({
       const userId = await handleUserId(ctx);
       if (userId) {
         const deletedTaskId = await ctx.db.delete(taskId);
-        //query todos and map through them and delete
 
         return deletedTaskId;
       }

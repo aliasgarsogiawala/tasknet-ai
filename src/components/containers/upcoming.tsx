@@ -43,9 +43,7 @@ export default function Upcoming() {
           const incompleteTodos = groupTodosByDate[dueDate] || [];
           const completedTodos = groupCompletedTodosByDate[dueDate] || [];
           
-          // Combine incomplete and completed tasks for this date
           const allTodos = [...incompleteTodos, ...completedTodos].sort((a, b) => {
-            // Sort by completion status (incomplete first), then by creation time
             if (a.isCompleted !== b.isCompleted) {
               return a.isCompleted ? 1 : -1;
             }

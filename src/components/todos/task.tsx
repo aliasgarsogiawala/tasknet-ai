@@ -1,10 +1,13 @@
-import { Doc } from "../../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../convex/_generated/dataModel";
 import clsx from "clsx";
 import AddTaskDialog from "../add-tasks/add-task-dialog";
 import { Checkbox } from "../ui/checkbox";
 import { Dialog, DialogTrigger } from "../ui/dialog";
-import { Calendar, GitBranch, Tag } from "lucide-react";
+import { Calendar, GitBranch, Tag, Trash2 } from "lucide-react";
 import moment from "moment";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { useToast } from "../ui/use-toast";
 
 function isSubTodo(
   data: Doc<"todos"> | Doc<"subTodos">
@@ -24,6 +27,15 @@ export default function Task({
   showDetails?: boolean;
 }) {
   const { taskName, dueDate } = data;
+  const deleteSubTodo = useMutation(api.subTodos.deleteASubTodo);
+  const { toast } = useToast();
+
+  const handleDeleteSubtask = async () => {
+    if (isSubTodo(data)) {
+      await deleteSubTodo({ taskId: data._id as Id<"subTodos"> });
+      toast({ title: "🗑️ Subtask deleted", duration: 2000 });
+    }
+  };
 
   return (
     <div
@@ -70,7 +82,17 @@ export default function Task({
               </div>
             </DialogTrigger>
           </div>
-          {!isSubTodo(data) && <AddTaskDialog data={data} />}
+          {!isSubTodo(data) ? (
+            <AddTaskDialog data={data} />
+          ) : (
+            <button
+              aria-label="Delete subtask"
+              onClick={handleDeleteSubtask}
+              className="p-1 rounded hover:bg-muted"
+            >
+              <Trash2 className="w-4 h-4 text-foreground/60 hover:text-red-600" />
+            </button>
+          )}
         </div>
       </Dialog>
     </div>

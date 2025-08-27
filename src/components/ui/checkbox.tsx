@@ -18,7 +18,6 @@ const Checkbox = React.forwardRef<
     )}
     {...props}
   >
-    {/* Hover preview check (hidden when checked) */}
     <span className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-60 data-[state=checked]:opacity-0">
       <Check className="h-3.5 w-3.5 text-primary" />
     </span>
