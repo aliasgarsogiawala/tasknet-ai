@@ -99,18 +99,17 @@ export const todayTodos = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
-      const todayStart = moment().startOf("day");
-      const todayEnd = moment().endOf("day");
+      // Use a 12h shift so date-only values (saved at local midnight) compare correctly across UTC
+      const SHIFT = 12 * 60 * 60 * 1000;
+      const todayStart = moment().startOf("day").valueOf() - SHIFT;
+      const todayEnd = moment().endOf("day").valueOf() - SHIFT;
 
       return await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("isCompleted"), false))
-        .filter(
-          (q) =>
-            q.gte(q.field("dueDate"), todayStart.valueOf()) &&
-            q.lte(q.field("dueDate"), todayEnd.valueOf())
-        )
+        .filter((q) => q.gte(q.field("dueDate"), todayStart))
+        .filter((q) => q.lte(q.field("dueDate"), todayEnd))
         .collect();
     }
     return [];
@@ -123,18 +122,16 @@ export const completedTodayTodos = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
-      const todayStart = moment().startOf("day");
-      const todayEnd = moment().endOf("day");
+      const SHIFT = 12 * 60 * 60 * 1000;
+      const todayStart = moment().startOf("day").valueOf() - SHIFT;
+      const todayEnd = moment().endOf("day").valueOf() - SHIFT;
 
       return await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("isCompleted"), true))
-        .filter(
-          (q) =>
-            q.gte(q.field("dueDate"), todayStart.valueOf()) &&
-            q.lte(q.field("dueDate"), todayEnd.valueOf())
-        )
+        .filter((q) => q.gte(q.field("dueDate"), todayStart))
+        .filter((q) => q.lte(q.field("dueDate"), todayEnd))
         .collect();
     }
     return [];
@@ -147,14 +144,14 @@ export const overdueTodos = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
+      const SHIFT = 12 * 60 * 60 * 1000;
+      const todayStart = moment().startOf("day").valueOf() - SHIFT;
 
       return await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("isCompleted"), false))
-        .filter((q) => q.lt(q.field("dueDate"), todayStart.getTime()))
+        .filter((q) => q.lt(q.field("dueDate"), todayStart))
         .collect();
     }
     return [];
@@ -295,20 +292,19 @@ export const groupTodosByDate = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
-      // Get tomorrow's start (after today)
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+      const SHIFT = 12 * 60 * 60 * 1000;
+      // Start from tomorrow (local-aware via shift)
+      const tomorrowStart = moment().add(1, "day").startOf("day").valueOf() - SHIFT;
 
       const todos = await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("isCompleted"), false))
-        .filter((q) => q.gte(q.field("dueDate"), tomorrow.getTime()))
+        .filter((q) => q.gte(q.field("dueDate"), tomorrowStart))
         .collect();
 
       const groupedTodos = todos.reduce<any>((acc, todo) => {
-        const dueDate = new Date(todo.dueDate).toDateString();
+        const dueDate = new Date(todo.dueDate + SHIFT).toDateString();
         acc[dueDate] = (acc[dueDate] || []).concat(todo);
         return acc;
       }, {});
@@ -325,20 +321,18 @@ export const groupCompletedTodosByDate = query({
     const userId = await handleUserId(ctx);
 
     if (userId) {
-      // Get tomorrow's start (after today)
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+      const SHIFT = 12 * 60 * 60 * 1000;
+      const tomorrowStart = moment().add(1, "day").startOf("day").valueOf() - SHIFT;
 
       const todos = await ctx.db
         .query("todos")
         .filter((q) => q.eq(q.field("userId"), userId))
         .filter((q) => q.eq(q.field("isCompleted"), true))
-        .filter((q) => q.gte(q.field("dueDate"), tomorrow.getTime()))
+        .filter((q) => q.gte(q.field("dueDate"), tomorrowStart))
         .collect();
 
       const groupedTodos = todos.reduce<any>((acc, todo) => {
-        const dueDate = new Date(todo.dueDate).toDateString();
+        const dueDate = new Date(todo.dueDate + SHIFT).toDateString();
         acc[dueDate] = (acc[dueDate] || []).concat(todo);
         return acc;
       }, {});

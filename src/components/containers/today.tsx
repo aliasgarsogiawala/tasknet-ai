@@ -8,7 +8,6 @@ import { Dot } from "lucide-react";
 import moment from "moment";
 
 export default function Today() {
-  const todos = useQuery(api.todos.get) ?? [];
   const todayTodos = useQuery(api.todos.todayTodos) ?? [];
   const completedTodayTodos = useQuery(api.todos.completedTodayTodos) ?? [];
   const overdueTodos = useQuery(api.todos.overdueTodos) ?? [];
@@ -22,8 +21,8 @@ export default function Today() {
     return a._creationTime - b._creationTime;
   });
 
-  if (todos === undefined || todayTodos === undefined) {
-    <p>Loading...</p>;
+  if (todayTodos === undefined || completedTodayTodos === undefined) {
+    return <p>Loading...</p>;
   }
   return (
     <div className="xl:px-40">

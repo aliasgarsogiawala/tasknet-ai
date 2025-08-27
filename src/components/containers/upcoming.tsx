@@ -16,7 +16,6 @@ export default function Upcoming() {
     <p>Loading...</p>;
   }
 
-  // Get all unique dates from both incomplete and completed todos
   const allDates = new Set([
     ...Object.keys(groupTodosByDate || {}),
     ...Object.keys(groupCompletedTodosByDate || {})
