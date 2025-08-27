@@ -88,7 +88,7 @@ export default function AddTaskDialog({ data }: { data: Doc<"todos"> }) {
       <DialogHeader className="w-full">
         <DialogTitle>{taskName}</DialogTitle>
         <DialogDescription>
-          <p className="my-2 capitalize">{description}</p>
+          <p className="my-2 capitalize whitespace-pre-wrap">{description}</p>
           <div className="flex items-center gap-1 mt-12 border-b-2 border-gray-100 pb-2 flex-wrap sm:justify-between lg:gap-0 ">
             <div className="flex gap-1">
               <ChevronDown className="w-5 h-5 text-primary" />

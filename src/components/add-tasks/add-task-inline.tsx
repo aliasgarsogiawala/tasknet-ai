@@ -180,12 +180,12 @@ export default function AddTaskInline({
               </FormItem>
             )}
           />
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="dueDate"
               render={({ field }) => (
-        <FormItem className="flex flex-col min-w-0">
+        <FormItem className="flex flex-col">
       <FormLabel>Due date</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -223,7 +223,7 @@ export default function AddTaskInline({
               control={form.control}
               name="priority"
               render={({ field }) => (
-        <FormItem className="min-w-0">
+        <FormItem>
                   <FormLabel>Priority</FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -251,7 +251,7 @@ export default function AddTaskInline({
               control={form.control}
               name="labelId"
               render={({ field }) => (
-        <FormItem className="min-w-0">
+        <FormItem>
                   <FormLabel>Label</FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -273,7 +273,7 @@ export default function AddTaskInline({
                       <div className="px-2 pb-2">
                         <button
                           type="button"
-                          className="text-primary text-sm underline"
+                          className="text-primary text-sm hover:underline"
                           onClick={() => document.getElementById("mobileAddLabelTrigger")?.click() || document.getElementById("closeDialog")?.click()}
                         >
                           + Create a new label
