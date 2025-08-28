@@ -33,12 +33,26 @@ export default function MobileNav({
   navLink?: string;
 }) {
   const projectList = useQuery(api.projects.getProjects);
+  const labelList = useQuery(api.labels.getLabels);
 
   const renderProjectItems = (projects: Array<Doc<"projects">>) => {
     return projects.map(({ _id, name }, idx) => (
       <Link
         key={_id.toString()}
         href={`/loggedin/projects/${_id.toString()}`}
+        className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground"
+      >
+        <Hash className="w-4 h-4" />
+        {name}
+      </Link>
+    ));
+  };
+
+  const renderLabelItems = (labels: Array<Doc<"labels">>) => {
+    return labels.map(({ _id, name }, idx) => (
+      <Link
+        key={_id.toString()}
+        href={`/loggedin/labels/${_id.toString()}`}
         className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground"
       >
         <Hash className="w-4 h-4" />
@@ -100,10 +114,8 @@ export default function MobileNav({
               <AddProjectDialog />
             </div>
 
-            {/* Dynamic project list (system + user) */}
             {projectList && renderProjectItems(projectList)}
 
-            {/* Ensure Get Started project is present for mobile users */}
             {!hasGetStarted && (
               <Link
                 href={`/loggedin/projects/${GET_STARTED_PROJECT_ID}`}
@@ -113,6 +125,12 @@ export default function MobileNav({
                 Get Started
               </Link>
             )}
+
+            <div className="flex items-center mt-6 mb-2">
+              <p className="flex flex-1 text-base">Labels</p>
+            </div>
+
+            {labelList && renderLabelItems(labelList)}
           </nav>
           <div className="mt-auto">
             <Card>

@@ -12,9 +12,7 @@ export default function Today() {
   const completedTodayTodos = useQuery(api.todos.completedTodayTodos) ?? [];
   const overdueTodos = useQuery(api.todos.overdueTodos) ?? [];
 
-  // Combine incomplete and completed tasks for today
   const allTodayTodos = [...todayTodos, ...completedTodayTodos].sort((a, b) => {
-    // Sort by completion status (incomplete first), then by creation time
     if (a.isCompleted !== b.isCompleted) {
       return a.isCompleted ? 1 : -1;
     }

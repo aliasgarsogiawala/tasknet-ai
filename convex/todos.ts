@@ -362,3 +362,39 @@ export const deleteATodo = mutation({
     }
   },
 });
+
+export const getTodosByLabelId = query({
+  args: {
+    labelId: v.id("labels"),
+  },
+  handler: async (ctx, { labelId }) => {
+    const userId = await handleUserId(ctx);
+    if (userId) {
+      return await ctx.db
+        .query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("labelId"), labelId))
+        .filter((q) => q.eq(q.field("isCompleted"), false))
+        .collect();
+    }
+    return [];
+  },
+});
+
+export const getCompletedTodosByLabelId = query({
+  args: {
+    labelId: v.id("labels"),
+  },
+  handler: async (ctx, { labelId }) => {
+    const userId = await handleUserId(ctx);
+    if (userId) {
+      return await ctx.db
+        .query("todos")
+        .filter((q) => q.eq(q.field("userId"), userId))
+        .filter((q) => q.eq(q.field("labelId"), labelId))
+        .filter((q) => q.eq(q.field("isCompleted"), true))
+        .collect();
+    }
+    return [];
+  },
+});

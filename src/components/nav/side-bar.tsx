@@ -31,10 +31,12 @@ export default function SideBar() {
   const pathname = usePathname();
 
   const projectList = useQuery(api.projects.getProjects);
+  const labelList = useQuery(api.labels.getLabels);
 
   const LIST_OF_TITLE_IDS: MyListTitleType = {
     primary: "",
     projects: "My Projects",
+    labels: "Labels",
   };
 
   const [navItems, setNavItems] = useState([...primaryNavItems]);
@@ -49,13 +51,26 @@ export default function SideBar() {
       };
     });
   };
+
+  const renderLabelItems = (labelList: Array<Doc<"labels">>) => {
+    return labelList.map(({ _id, name }, idx) => {
+      return {
+        ...(idx === 0 && { id: "labels" }),
+        name,
+        link: `/loggedin/labels/${_id.toString()}`,
+        icon: <Hash className="w-4 h-4" />,
+      };
+    });
+  };
+  
   useEffect(() => {
-    if (projectList) {
+    if (projectList && labelList) {
       const projectItems = renderItems(projectList);
-      const items = [...primaryNavItems, ...projectItems];
+      const labelItems = renderLabelItems(labelList);
+      const items = [...primaryNavItems, ...projectItems, ...labelItems];
       setNavItems(items);
     }
-  }, [projectList]);
+  }, [projectList, labelList]);
 
   return (
     <div className="hidden md:block sticky top-0 h-[100dvh] border-r bg-muted/40">
