@@ -398,3 +398,38 @@ export const getCompletedTodosByLabelId = query({
     return [];
   },
 });
+
+export const updateTodo = mutation({
+  args: {
+    taskId: v.id("todos"),
+    taskName: v.optional(v.string()),
+    description: v.optional(v.string()),
+    dueDate: v.optional(v.number()),
+    priority: v.optional(v.float64()),
+    projectId: v.optional(v.id("projects")),
+    labelId: v.optional(v.id("labels")),
+  },
+  handler: async (ctx, { taskId, taskName, description, dueDate, priority, projectId, labelId }) => {
+    try {
+      const userId = await handleUserId(ctx);
+      if (!userId) return null;
+
+      const todo = await ctx.db.get(taskId);
+      if (!todo || todo.userId !== userId) return null;
+
+      const updateData: any = {};
+      if (taskName !== undefined) updateData.taskName = taskName;
+      if (description !== undefined) updateData.description = description;
+      if (dueDate !== undefined) updateData.dueDate = dueDate;
+      if (priority !== undefined) updateData.priority = priority;
+      if (projectId !== undefined) updateData.projectId = projectId;
+      if (labelId !== undefined) updateData.labelId = labelId;
+
+      await ctx.db.patch(taskId, updateData);
+      return taskId;
+    } catch (err) {
+      console.log("Error occurred during updateTodo mutation", err);
+      return null;
+    }
+  },
+});
