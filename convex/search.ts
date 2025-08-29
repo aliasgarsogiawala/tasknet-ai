@@ -28,24 +28,41 @@ export const searchTasks = action({
   handler: async (ctx, { query }) => {
     try {
       const userId = await handleUserId(ctx);
-      if (userId) {
-        const embedding = await getEmbeddingsWithAI(query);
-
-        const results = await ctx.vectorSearch("todos", "by_embedding", {
-          vector: embedding,
-          limit: 16,
-          filter: (q) => q.eq("userId", userId),
-        });
-        const rows: any = await ctx.runQuery(
-          internal.search.fetchSearchResults,
-          {
-            results,
-          }
-        );
-        return rows;
+      if (!userId) {
+        console.log("No userId found for search");
+        return [];
       }
+
+      if (!query || query.trim() === "") {
+        console.log("Empty search query");
+        return [];
+      }
+
+      const embedding = await getEmbeddingsWithAI(query);
+
+      const results = await ctx.vectorSearch("todos", "by_embedding", {
+        vector: embedding,
+        limit: 16,
+        filter: (q) => q.eq("userId", userId),
+      });
+
+      if (!results || results.length === 0) {
+        console.log("No vector search results found");
+        return [];
+      }
+
+      const rows: any = await ctx.runQuery(
+        internal.search.fetchSearchResults,
+        {
+          results,
+        }
+      );
+      
+      console.log(`Search for "${query}" returned ${rows?.length || 0} results`);
+      return rows || [];
     } catch (err) {
       console.error("Error searching", err);
+      return [];
     }
   },
 });

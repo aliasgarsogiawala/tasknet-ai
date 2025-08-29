@@ -19,6 +19,7 @@ export default function Search() {
 
   useEffect(() => {
     const handleSearch = async () => {
+      console.log("Starting search for:", searchQuery);
       setSearchResults([]);
 
       setSearchInProgress(true);
@@ -27,14 +28,20 @@ export default function Search() {
           query: searchQuery,
         });
 
-        setSearchResults(results);
+        console.log("Search results received:", results);
+        setSearchResults(results || []);
+      } catch (error) {
+        console.error("Search error:", error);
+        setSearchResults([]);
       } finally {
         setSearchInProgress(false);
       }
     };
 
-    if (searchQuery) {
+    if (searchQuery && searchQuery.trim() !== "") {
       handleSearch();
+    } else {
+      setSearchResults([]);
     }
   }, [searchQuery, vectorSearch]);
 
@@ -57,11 +64,23 @@ export default function Search() {
             </div>
 
             <div className="flex flex-col gap-1 py-4">
-              <Todos
-                items={searchResults.filter(
-                  (item: any) => item.isCompleted === false
-                )}
-              />
+              {searchInProgress ? (
+                <div className="text-center py-4">
+                  <p className="text-muted-foreground">Searching...</p>
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-muted-foreground">
+                    No tasks found for "{decodeURI(searchQuery)}"
+                  </p>
+                </div>
+              ) : (
+                <Todos
+                  items={searchResults.filter(
+                    (item: any) => item.isCompleted === false
+                  )}
+                />
+              )}
             </div>
           </div>
         </main>
