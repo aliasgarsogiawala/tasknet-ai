@@ -32,6 +32,7 @@ export default function Task({
   const deleteSubTodo = useMutation(api.subTodos.deleteASubTodo);
   const { toast } = useToast();
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
 
   const handleDeleteSubtask = async () => {
     if (isSubTodo(data)) {
@@ -57,15 +58,40 @@ export default function Task({
               checked={isCompleted}
               onCheckedChange={handleOnChange}
             />
-            <div className="flex flex-col items-start">
-              <div
-                className={clsx(
-                  "text-sm font-normal text-left",
-                  isCompleted && "line-through text-foreground/30"
-                )}
-              >
-                {taskName}
-              </div>
+            <div className="flex flex-col items-start flex-1">
+              {/* Make task title clickable */}
+              {!isSubTodo(data) ? (
+                <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
+                  <DialogTrigger asChild>
+                    <button
+                      className={clsx(
+                        "text-sm font-normal text-left hover:text-primary transition-colors cursor-pointer",
+                        isCompleted && "line-through text-foreground/30"
+                      )}
+                    >
+                      {taskName}
+                    </button>
+                  </DialogTrigger>
+                  <AddTaskDialog data={data} />
+                </Dialog>
+              ) : (
+                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                  <DialogTrigger asChild>
+                    <button
+                      className={clsx(
+                        "text-sm font-normal text-left hover:text-primary transition-colors cursor-pointer",
+                        isCompleted && "line-through text-foreground/30"
+                      )}
+                    >
+                      {taskName}
+                    </button>
+                  </DialogTrigger>
+                  <EditTaskDialog 
+                    data={data} 
+                    onClose={() => setIsEditOpen(false)} 
+                  />
+                </Dialog>
+              )}
               {showDetails && (
                 <div className="flex gap-2">
                   <div className="flex items-center justify-center gap-1">
@@ -83,40 +109,30 @@ export default function Task({
             </div>
           </div>
           <div className="flex items-center gap-1">
-            {/* Edit button */}
-            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-              <DialogTrigger asChild>
-                <button
-                  aria-label="Edit task"
-                  className="p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <Edit3 className="w-4 h-4 text-foreground/60 hover:text-blue-600" />
-                </button>
-              </DialogTrigger>
-              <EditTaskDialog 
-                data={data} 
-                onClose={() => setIsEditOpen(false)} 
-              />
-            </Dialog>
-
-            {/* Main action button (view subtasks or delete) */}
-            {!isSubTodo(data) ? (
-              <Dialog>
+            {/* Edit button - only show for main todos since subtodos can be edited by clicking title */}
+            {!isSubTodo(data) && (
+              <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                 <DialogTrigger asChild>
                   <button
-                    aria-label="View task details"
-                    className="p-1 rounded hover:bg-muted"
+                    aria-label="Edit task"
+                    className="p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    <Tag className="w-4 h-4 text-foreground/60 hover:text-primary" />
+                    <Edit3 className="w-4 h-4 text-foreground/60 hover:text-blue-600" />
                   </button>
                 </DialogTrigger>
-                <AddTaskDialog data={data} />
+                <EditTaskDialog 
+                  data={data} 
+                  onClose={() => setIsEditOpen(false)} 
+                />
               </Dialog>
-            ) : (
+            )}
+
+            {/* Delete button for subtodos */}
+            {isSubTodo(data) && (
               <button
                 aria-label="Delete subtask"
                 onClick={handleDeleteSubtask}
-                className="p-1 rounded hover:bg-muted"
+                className="p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Trash2 className="w-4 h-4 text-foreground/60 hover:text-red-600" />
               </button>

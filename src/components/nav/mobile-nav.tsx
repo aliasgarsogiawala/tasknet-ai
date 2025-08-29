@@ -75,7 +75,7 @@ export default function MobileNav({
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
-          <nav className="grid gap-2 text-lg font-medium">
+          <nav className="grid gap-2 text-lg font-medium overflow-y-auto flex-1">
             <UserProfile />
 
             {primaryNavItems.map(({ name, icon, link, id }, idx) => (
