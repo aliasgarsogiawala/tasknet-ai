@@ -4,7 +4,8 @@ import AddTaskDialog from "../add-tasks/add-task-dialog";
 import EditTaskDialog from "../add-tasks/edit-task-dialog";
 import { Checkbox } from "../ui/checkbox";
 import { Dialog, DialogTrigger } from "../ui/dialog";
-import { Calendar, GitBranch, Tag, Trash2, Edit3 } from "lucide-react";
+import { Input } from "../ui/input";
+import { Calendar, GitBranch, Tag, Trash2, Edit3, Check, X } from "lucide-react";
 import moment from "moment";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -30,14 +31,44 @@ export default function Task({
 }) {
   const { taskName, dueDate } = data;
   const deleteSubTodo = useMutation(api.subTodos.deleteASubTodo);
+  const updateSubTodo = useMutation(api.subTodos.updateSubTodo);
   const { toast } = useToast();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(taskName);
 
   const handleDeleteSubtask = async () => {
     if (isSubTodo(data)) {
       await deleteSubTodo({ taskId: data._id as Id<"subTodos"> });
       toast({ title: "🗑️ Subtask deleted", duration: 2000 });
+    }
+  };
+
+  const handleSaveTitle = async () => {
+    if (isSubTodo(data) && editedTitle.trim() !== taskName) {
+      try {
+        await updateSubTodo({ 
+          taskId: data._id as Id<"subTodos">, 
+          taskName: editedTitle.trim() 
+        });
+        toast({ title: "✅ Subtask updated", duration: 2000 });
+      } catch (error) {
+        toast({ title: "❌ Failed to update subtask", duration: 2000 });
+        setEditedTitle(taskName); 
+      }
+    }
+    setIsEditingTitle(false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditedTitle(taskName);
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleClick = () => {
+    if (isSubTodo(data)) {
+      setIsEditingTitle(true);
     }
   };
 
@@ -59,7 +90,6 @@ export default function Task({
               onCheckedChange={handleOnChange}
             />
             <div className="flex flex-col items-start flex-1">
-              {/* Make task title clickable */}
               {!isSubTodo(data) ? (
                 <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
                   <DialogTrigger asChild>
@@ -75,22 +105,47 @@ export default function Task({
                   <AddTaskDialog data={data} />
                 </Dialog>
               ) : (
-                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                  <DialogTrigger asChild>
+                <div className="flex items-center gap-2 w-full">
+                  {isEditingTitle ? (
+                    <>
+                      <Input
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveTitle();
+                          if (e.key === 'Escape') handleCancelEdit();
+                        }}
+                        onBlur={handleSaveTitle}
+                        autoFocus
+                        className="text-sm h-6 px-1 py-0 border-primary"
+                      />
+                      <button
+                        onClick={handleSaveTitle}
+                        className="p-1 rounded hover:bg-muted"
+                        aria-label="Save"
+                      >
+                        <Check className="w-3 h-3 text-green-600" />
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="p-1 rounded hover:bg-muted"
+                        aria-label="Cancel"
+                      >
+                        <X className="w-3 h-3 text-red-600" />
+                      </button>
+                    </>
+                  ) : (
                     <button
+                      onClick={handleTitleClick}
                       className={clsx(
-                        "text-sm font-normal text-left hover:text-primary transition-colors cursor-pointer",
+                        "text-sm font-normal text-left hover:text-primary transition-colors cursor-pointer flex-1",
                         isCompleted && "line-through text-foreground/30"
                       )}
                     >
                       {taskName}
                     </button>
-                  </DialogTrigger>
-                  <EditTaskDialog 
-                    data={data} 
-                    onClose={() => setIsEditOpen(false)} 
-                  />
-                </Dialog>
+                  )}
+                </div>
               )}
               {showDetails && (
                 <div className="flex gap-2">
@@ -109,7 +164,6 @@ export default function Task({
             </div>
           </div>
           <div className="flex items-center gap-1">
-            {/* Edit button - only show for main todos since subtodos can be edited by clicking title */}
             {!isSubTodo(data) && (
               <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                 <DialogTrigger asChild>
@@ -127,7 +181,6 @@ export default function Task({
               </Dialog>
             )}
 
-            {/* Delete button for subtodos */}
             {isSubTodo(data) && (
               <button
                 aria-label="Delete subtask"

@@ -11,7 +11,6 @@ export default function LabelTasksContainer({ labelId }: { labelId: Id<"labels">
   const completedTodos = useQuery(api.todos.getCompletedTodosByLabelId, { labelId }) ?? [];
   const label = useQuery(api.labels.getLabelByLabelId, { labelId });
 
-  // Combine incomplete and completed todos, sorting by completion status and creation time
   const allTodos = [...incompleteTodos, ...completedTodos].sort((a, b) => {
     if (a.isCompleted !== b.isCompleted) {
       return a.isCompleted ? 1 : -1;
